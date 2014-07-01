@@ -8,9 +8,9 @@ MAX_ITERATIONS = 30
 
 def ndim_euclidean_distance(point1, point2):
     """Calculate euclidean distance between two points in n-dimensions.
-    This utility function is a simple function composition of the form:
+    This utility is a simple function composition of the form:
     sqrt . sum . matrixSquare . matrixSubtract point1 point2
-    or, in more familiar notation,
+    in polish notation or, in more familiar notation,
     sqrt((point1[0]-point2[0])^2+(point1[1]-point2[1])^2+...
     (point1[n-1]-point2[n-1]^2))"""
     distance = np.sqrt(np.sum(np.square(np.subtract(point1, point2))))
@@ -30,7 +30,7 @@ def should_iter(old_centroids, new_centroids, iterations):
 def assign_centroid(data, centroids):
     """Find the nearest centroid from a given list - return a tuple mapping
     the indexes in format (data_point, centroid)"""
-    tag_list = []
+    centroid_association = []
 
     for i, datum in enumerate(data):
         for j, centroid in enumerate(centroids):
@@ -43,5 +43,9 @@ def assign_centroid(data, centroids):
                     nearest_centroid = j
                     nearest_distance = compare_distance
 
-        tag_list.append((i,nearest_centroid))
-    return tag_list
+        centroid_association.append((i, nearest_centroid))
+    return centroid_association
+
+
+if __name__ == "__main__":
+    pass
