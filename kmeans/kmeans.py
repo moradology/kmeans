@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """kmeans cluster algorithm and various helper functions; implemented
 specifically to handle hexoskin result data"""
+
 import numpy as np
 
 MAX_ITERATIONS = 30
@@ -13,7 +14,17 @@ def ndim_euclidean_distance(point1, point2):
     in polish notation or, in more familiar notation,
     sqrt((point1[0]-point2[0])^2+(point1[1]-point2[1])^2+...
     (point1[n-1]-point2[n-1]^2))"""
-    distance = np.sqrt(np.sum(np.square(np.subtract(point1, point2))))
+    if type(point1) == 'list':
+        pnt1 = point1
+    else:
+        pnt1 = [point1]
+
+    if type(point2) == 'list':
+        pnt2 = point2
+    else:
+        pnt2 = [point2]
+
+    distance = np.sqrt(np.sum(np.square(np.subtract(pnt1, pnt2))))
     return distance
 
 
