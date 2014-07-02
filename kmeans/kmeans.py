@@ -58,5 +58,11 @@ def assign_centroid(data, centroids):
     return centroid_association
 
 
+def random_centroids(k, dimensions):
+    """Generate k random centroids  with specified dimensions with
+    vals between 0 and 1"""
+    centroids = [np.random.rand(dimensions) for _ in range(k)]
+    return centroids
+
 if __name__ == "__main__":
     pass
