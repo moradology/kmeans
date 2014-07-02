@@ -43,18 +43,18 @@ def assign_centroid(data, centroids):
     the indexes in format (data_point, centroid)"""
     centroid_association = []
 
-    for i, datum in enumerate(data):
-        for j, centroid in enumerate(centroids):
-            if j == 0:
-                nearest_centroid = j
+    for data_index, datum in enumerate(data):
+        for centroid_index, centroid in enumerate(centroids):
+            if centroid_index == 0:
+                nearest_centroid = centroid_index
                 nearest_distance = ndim_euclidean_distance(datum, centroid)
             else:
                 compare_distance = ndim_euclidean_distance(datum, centroid)
                 if nearest_distance > compare_distance:
-                    nearest_centroid = j
+                    nearest_centroid = centroid_index
                     nearest_distance = compare_distance
 
-        centroid_association.append((i, nearest_centroid))
+        centroid_association.append((data_index, nearest_centroid))
     return centroid_association
 
 
@@ -63,6 +63,34 @@ def random_centroids(k, dimensions):
     vals between 0 and 1"""
     centroids = [np.random.rand(dimensions) for _ in range(k)]
     return centroids
+
+
+def iterated_centroid(data, centroids, centroid_association):
+    """Find new centroids given a current association"""
+
+    # initialize empty np.array to be filled - this is way faster than the
+    # conversion of lists
+    k = len(centroids)
+    dimensions = len(centroids[0])
+    new_centroids = np.empty((k, dimensions))
+    print k
+    print dimensions
+    print new_centroids
+
+    for i in xrange(k):
+        # gather together the associations relevant to the given centroid
+        centroid_associations = [association[0] for association in\
+                centroid_association if association[1] == i]
+        print centroid_associations
+
+        # use these associations to generate a list of associated observations
+        associated_data = [datum for j, datum in enumerate(data)\
+                if j in centroid_associations]
+        print associated_data
+
+        new_centroids[i] = np.mean(associated_data)
+
+    return new_centroids
 
 if __name__ == "__main__":
     pass

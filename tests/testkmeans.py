@@ -3,7 +3,6 @@
 import kmeans.kmeans.kmeans as kmeans
 import numpy as np
 import random
-import pytest
 
 
 def test_1dim_distance():
@@ -30,11 +29,19 @@ def test_maxiters():
     assert kmeans.should_iter([], [], iterations=31) == False
 
 
-def test_randcentroid_dimensions():
+def test_random_centroid_dimensions():
     """ensure the correct number of dimensions"""
     dimensions = random.randrange(1, 100)
     k = random.randrange(1, 100)
     centroids = kmeans.random_centroids(k, dimensions)
     for centroid in centroids:
         assert len(centroid) == dimensions
+
+
+def test_iterated_centroid():
+    """ensure that the average across each dimension is returned"""
+    new_centroid = kmeans.iterated_centroid([[1, 1, 1], [2, 2, 2]],\
+            [[100, 200, 300]], [(0, 0), (1, 0)])
+    np.testing.assert_allclose(new_centroid, np.array([[1.5, 1.5, 1.5]]),\
+            rtol=1e-5)
 
