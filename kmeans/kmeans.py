@@ -4,7 +4,7 @@ specifically to handle hexoskin result data"""
 
 import numpy as np
 
-MAX_ITERATIONS = 30
+ITER_LIMIT = 30
 
 
 def ndim_euclidean_distance(point1, point2):
@@ -31,10 +31,15 @@ def ndim_euclidean_distance(point1, point2):
 def should_iter(old_centroids, new_centroids, iterations):
     """Check to see if the iteration bank is empty, if not, compare centroids
     to determine whether or not further iteration is necessary"""
-    if iterations >= MAX_ITERATIONS:
+    if iterations >= ITER_LIMIT:
         condition = False
     else:
-        condition = old_centroids == new_centroids
+        condition = not np.allclose(old_centroids, new_centroids, rtol=1e-40)
+        '''print 'old'
+        print old_centroids
+        print 'new'
+        print new_centroids
+        print np.allclose(old_centroids, new_centroids, rtol=1e-40)'''
     return condition
 
 
@@ -70,27 +75,50 @@ def iterated_centroid(data, centroids, centroid_association):
 
     # initialize empty np.array to be filled - this is way faster than the
     # conversion of lists
-    k = len(centroids)
-    dimensions = len(centroids[0])
+    k = np.size(centroids, 0)
+    dimensions = np.size(centroids, 1)
     new_centroids = np.empty((k, dimensions))
-    print k
-    print dimensions
-    print new_centroids
+    #print new_centroids
 
     for i in xrange(k):
         # gather together the associations relevant to the given centroid
         centroid_associations = [association[0] for association in\
                 centroid_association if association[1] == i]
-        print centroid_associations
 
         # use these associations to generate a list of associated observations
         associated_data = [datum for j, datum in enumerate(data)\
                 if j in centroid_associations]
-        print associated_data
 
-        new_centroids[i] = np.mean(associated_data)
+        if associated_data != []:
+            new_centroids[i] = np.mean(associated_data, 0)
+        else:
+            new_centroids[i] = np.mean(data, 0)
 
     return new_centroids
+
+
+def kmeans(k, data):
+    """carry out the kmeans algorithm"""
+    # initial state of centroids (random)
+    dimensions = np.size(data, 1)
+    new_centroids = random_centroids(k, dimensions)
+
+    iterations = 0
+    old_centroids = np.empty((k, dimensions))
+
+    while should_iter(old_centroids, new_centroids, iterations):
+        #print "iterating..."
+        old_centroids = new_centroids
+        iterations = iterations + 1
+
+        centroid_mapping = assign_centroid(data, new_centroids)
+        new_centroids = iterated_centroid(data, old_centroids,\
+                centroid_mapping)
+
+    print new_centroids
+    return new_centroids
+
+
 
 if __name__ == "__main__":
     pass
